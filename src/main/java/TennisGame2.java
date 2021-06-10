@@ -1,135 +1,213 @@
-
 public class TennisGame2 implements TennisGame
 {
-    public int P1point = 0;
-    public int P2point = 0;
-    
-    public String P1res = "";
-    public String P2res = "";
-    private String player1Name;
-    private String player2Name;
+    public int pointsPlayerOne = 0;
+    public int pointsPlayerTwo = 0;
 
-    public TennisGame2(String player1Name, String player2Name) {
-        this.player1Name = player1Name;
-        this.player2Name = player2Name;
+    public String resultPlayer = "";
+    public String resultPlayerOne = "";
+    public String resultPlayerTwo = "";
+    private String namePlayerOne;
+    private String namePlayerTwo;
+
+    private final String THIRTY = "Thirty";
+    private final String FIFTEEN = "Fifteen";
+    private final String FORTY = "Forty";
+    private final String LOVE = "Love";
+
+    public TennisGame2(String namePlayerOne, String namePlayerTwo) {
+        this.namePlayerOne = namePlayerOne;
+        this.namePlayerTwo = namePlayerTwo;
     }
 
     public String getScore(){
         String score = "";
-        if (P1point == P2point && P1point < 4)
+        score = tiePoints(score);
+
+        score = deuceCase(score);
+
+        score = playerOneAdventage(score);
+        score = playerTwoAdventage(score);
+
+        score = pointsOnGameForBothPlayers(score);
+
+        score = adventageMessage(score);
+
+        score = winnerMessage(score);
+
+        return score;
+    }
+
+    private String pointsOnGameForBothPlayers(String score) {
+        score = pointsForPlayerOne(score);
+        if (pointsPlayerTwo > pointsPlayerOne && pointsPlayerTwo < 4)
         {
-            if (P1point==0)
-                score = "Love";
-            if (P1point==1)
-                score = "Fifteen";
-            if (P1point==2)
-                score = "Thirty";
+            onGamePlayerTwoAdventage();
+            score = resultPlayerOne + "-" + resultPlayerTwo;
+        }
+        return score;
+    }
+
+    private String pointsForPlayerOne(String score) {
+        if (pointsPlayerOne > pointsPlayerTwo && pointsPlayerOne < 4)
+        {
+            onGamePlayerOneAdventage(pointsPlayerOne, pointsPlayerTwo);
+            score = resultPlayerOne + "-" + resultPlayerTwo;
+        }
+        return score;
+    }
+
+    private String playerTwoAdventage(String score) {
+        if (pointsPlayerTwo > 0 && pointsPlayerOne ==0)
+        {
+            playerAdventage(pointsPlayerTwo);
+            resultPlayerTwo = resultPlayer;
+            resultPlayerOne = LOVE;
+            score = resultPlayerOne + "-" + resultPlayerTwo;
+        }
+        return score;
+    }
+
+    private String playerOneAdventage(String score) {
+        if (pointsPlayerOne > 0 && pointsPlayerTwo ==0)
+        {
+            playerAdventage(pointsPlayerOne);
+            resultPlayerOne = resultPlayer;
+            resultPlayerTwo = LOVE;
+            score = resultPlayerOne + "-" + resultPlayerTwo;
+        }
+        return score;
+    }
+
+    private String deuceCase(String score) {
+        if (pointsPlayerOne == pointsPlayerTwo && pointsPlayerOne >=3)
+            score = "Deuce";
+        return score;
+    }
+
+    private String tiePoints(String score) {
+        if (pointsPlayerOne == pointsPlayerTwo && pointsPlayerOne < 4)
+        {
+            score = tiePointsCases(score);
             score += "-All";
         }
-        if (P1point==P2point && P1point>=3)
-            score = "Deuce";
-        
-        if (P1point > 0 && P2point==0)
-        {
-            if (P1point==1)
-                P1res = "Fifteen";
-            if (P1point==2)
-                P1res = "Thirty";
-            if (P1point==3)
-                P1res = "Forty";
-            
-            P2res = "Love";
-            score = P1res + "-" + P2res;
-        }
-        if (P2point > 0 && P1point==0)
-        {
-            if (P2point==1)
-                P2res = "Fifteen";
-            if (P2point==2)
-                P2res = "Thirty";
-            if (P2point==3)
-                P2res = "Forty";
-            
-            P1res = "Love";
-            score = P1res + "-" + P2res;
-        }
-        
-        if (P1point>P2point && P1point < 4)
-        {
-            if (P1point==2)
-                P1res="Thirty";
-            if (P1point==3)
-                P1res="Forty";
-            if (P2point==1)
-                P2res="Fifteen";
-            if (P2point==2)
-                P2res="Thirty";
-            score = P1res + "-" + P2res;
-        }
-        if (P2point>P1point && P2point < 4)
-        {
-            if (P2point==2)
-                P2res="Thirty";
-            if (P2point==3)
-                P2res="Forty";
-            if (P1point==1)
-                P1res="Fifteen";
-            if (P1point==2)
-                P1res="Thirty";
-            score = P1res + "-" + P2res;
-        }
-        
-        if (P1point > P2point && P2point >= 3)
-        {
-            score = "Advantage player1";
-        }
-        
-        if (P2point > P1point && P1point >= 3)
-        {
-            score = "Advantage player2";
-        }
-        
-        if (P1point>=4 && P2point>=0 && (P1point-P2point)>=2)
-        {
-            score = "Win for player1";
-        }
-        if (P2point>=4 && P1point>=0 && (P2point-P1point)>=2)
+        return score;
+    }
+
+    private String tiePointsCases(String score) {
+        if (pointsPlayerOne ==0)
+            score = LOVE;
+        if (pointsPlayerOne ==1)
+            score = FIFTEEN;
+        if (pointsPlayerOne ==2)
+            score = THIRTY;
+        return score;
+    }
+
+    private String winnerMessage(String score) {
+        score = playerOneWon(score);
+        score = playerTwoWon(score);
+        return score;
+    }
+
+    private String playerTwoWon(String score) {
+        if (pointsPlayerTwo >=4 && pointsPlayerOne >=0 && (pointsPlayerTwo - pointsPlayerOne)>=2)
         {
             score = "Win for player2";
         }
         return score;
     }
-    
+
+    private String playerOneWon(String score) {
+        if (pointsPlayerOne >=4 && pointsPlayerTwo >=0 && (pointsPlayerOne - pointsPlayerTwo)>=2)
+        {
+            score = "Win for player1";
+        }
+        return score;
+    }
+
+    private String adventageMessage(String score) {
+        score = adventagePlayerOneOnGame(score);
+
+        if (pointsPlayerTwo > pointsPlayerOne && pointsPlayerOne >= 3)
+        {
+            score = "Advantage player2";
+        }
+        return score;
+    }
+
+    private String adventagePlayerOneOnGame(String score) {
+        if (pointsPlayerOne > pointsPlayerTwo && pointsPlayerTwo >= 3)
+        {
+            score = "Advantage player1";
+        }
+        return score;
+    }
+
+    private void onGamePlayerTwoAdventage() {
+        if (pointsPlayerTwo ==2)
+            resultPlayerTwo =THIRTY;
+        if (pointsPlayerTwo ==3)
+            resultPlayerTwo =FORTY;
+        if (pointsPlayerOne ==1)
+            resultPlayerOne =FIFTEEN;
+        if (pointsPlayerOne ==2)
+            resultPlayerOne =THIRTY;
+    }
+
+    private void onGamePlayerOneAdventage(int pointsPlayerOne, int pointsPlayerTwo) {
+        if (pointsPlayerOne ==2)
+            resultPlayerOne =THIRTY;
+        if (pointsPlayerOne ==3)
+            resultPlayerOne =FORTY;
+        if (pointsPlayerTwo ==1)
+            resultPlayerTwo =FIFTEEN;
+        if (pointsPlayerTwo ==2)
+            resultPlayerTwo =THIRTY;
+    }
+
+    private void playerAdventage(int pointsPlayer) {
+        if (pointsPlayer ==1)
+            resultPlayer = FIFTEEN;
+        if (pointsPlayer ==2)
+            resultPlayer = THIRTY;
+        if (pointsPlayer ==3)
+            resultPlayer = FORTY;
+    }
+
     public void SetP1Score(int number){
-        
+
         for (int i = 0; i < number; i++)
         {
             P1Score();
         }
-            
+
     }
-    
+
     public void SetP2Score(int number){
-        
+
         for (int i = 0; i < number; i++)
         {
             P2Score();
         }
-            
+
     }
-    
+
     public void P1Score(){
-        P1point++;
+        pointsPlayerOne++;
     }
-    
+
     public void P2Score(){
-        P2point++;
+        pointsPlayerTwo++;
     }
 
     public void wonPoint(String player) {
-        if (player == "player1")
+        if (player == "player1"){
             P1Score();
-        else
+        }
+
+        if(player == "player2"){
             P2Score();
+        }
+
     }
 }
